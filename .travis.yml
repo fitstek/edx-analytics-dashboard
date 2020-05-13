@@ -1,3 +1,4 @@
+dist: xenial
 language:
   - python
 python:
@@ -23,6 +24,10 @@ before_install:
     - rm package-lock.json
 
 install:
+    - docker exec -t -e TRAVIS=1 insights_testing bash -c "
+      sudo add-apt-repository ppa:deadsnakes/ppa -y;
+      sudo apt-get update -y;
+      sudo apt-get install python3.8 python3.8-distutils python3.8-dev -y;"
     - pip install -r requirements/travis.txt
 
 script:
@@ -58,10 +63,6 @@ matrix:
       env:
         TESTNAME=test-python-38
         TARGETS="PYTHON_ENV=py38 requirements.js test_python"
-  allow_failures:
-    - python: 3.8
-
-
 
 after_failure:
     # Print the list of running containers to rule out a killed container as a cause of failure
